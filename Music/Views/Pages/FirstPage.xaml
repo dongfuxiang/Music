@@ -1,0 +1,245 @@
+﻿<UserControl x:Class="Music.ViewModels.Pages.FirstPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Music.ViewModels.Pages"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="1,0,0,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="#EEE" />
+            <Setter Property="Margin" Value="10,0" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <Grid Height="30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0">
+                                <Border.Background>
+                                    <ImageBrush ImageSource="{Binding Cover}" />
+                                </Border.Background>
+                            </Border>
+                            <TextBlock Grid.Column="1"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Index, StringFormat={}{0:00}}" />
+
+                            <!--  TextTrimming="CharacterEllipsis"使用省略号代替被截断的文本  -->
+                            <TextBlock Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Normal"
+                                       Foreground="#555"
+                                       Text="{Binding SongName}"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="3"
+                                       Margin="5,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       FontSize="11"
+                                       Foreground="#999"
+                                       Text="{Binding Singer}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid x:Name="root" Margin="0,3">
+                            <ContentPresenter />
+                            <TextBlock x:Name="text"
+                                       Margin="20,0,0,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="11"
+                                       Visibility="Collapsed">
+                                <Hyperlink Command="{Binding DataContext.PlayCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                           CommandParameter="{Binding}"
+                                           TextDecorations="None">
+                                    播放
+                                </Hyperlink>
+                                <Hyperlink TextDecorations="None">
+                                    添加
+                                </Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="root" Property="Background" Value="#44ECEAF6" />
+                                <Setter TargetName="text" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="70" />
+        </Grid.RowDefinitions>
+
+        <TextBlock HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   FontWeight="Bold"
+                   Foreground="#555"
+                   Text="热门专辑" />
+        <ListBox Grid.Row="1"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 ItemsSource="{Binding AlbumList}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            <ListBox.ItemsPanel>
+                <!--  横向排列  -->
+                <ItemsPanelTemplate>
+                    <!--
+                        VirtualizingStackPanel - 虚拟化的 StackPanel（即仅生成需要显示的 UI 元素。当绑定了大量数据，而某时仅显示其中一小部分的时候，使用此控件则可大幅提高呈现效率）
+                        Orientation - 数据的排列方式（垂直排列或水平排列，也就是说 ListBox 也可以水平排列）
+                        VirtualizationMode - 虚拟化的模式
+                        Recycling - item 的容器会被重用，默认值
+                        Standard - 每个 item 都有自己独立的容器
+                        注：ListBox 默认已经使用了 VirtualizingStackPanel，但是其对于变高的 DataTemplate 来说支持得不好
+                    -->
+                    <VirtualizingStackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter Margin="5" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Border Width="100"
+                                Height="100"
+                                CornerRadius="5">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding Cover}" />
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="5"
+                                                  Opacity="0.5"
+                                                  ShadowDepth="2"
+                                                  Color="Gray" />
+                            </Border.Effect>
+                        </Border>
+                        <StackPanel Grid.Row="1">
+                            <TextBlock Margin="0,5"
+                                       FontWeight="Bold"
+                                       Foreground="#555"
+                                       Text="{Binding Title}" />
+                            <TextBlock Margin="0,5"
+                                       FontSize="11"
+                                       Foreground="#999"
+                                       Text="{Binding Author}" />
+
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Grid.Row="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   FontWeight="Bold"
+                   Foreground="#555"
+                   Text="单曲榜单" />
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0"
+                       Margin="10,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontWeight="Normal"
+                       Foreground="#888"
+                       Text="飙升榜" />
+            <TextBlock Grid.Column="0"
+                       Margin="10,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="10">
+                <Hyperlink TextDecorations="None">[更多]</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Column="1"
+                       Margin="10,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontWeight="Normal"
+                       Foreground="#888"
+                       Text="热歌榜" />
+            <TextBlock Grid.Column="1"
+                       Margin="10,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="10">
+                <Hyperlink TextDecorations="None">[更多]</Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Column="2"
+                       Margin="10,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontWeight="Normal"
+                       Foreground="#888"
+                       Text="TOP500" />
+            <TextBlock Grid.Column="2"
+                       Margin="10,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       FontSize="10">
+                <Hyperlink TextDecorations="None">[更多]</Hyperlink>
+            </TextBlock>
+            
+            <ListBox Grid.Row="1"
+                     Grid.Column="0"
+                     ItemsSource="{Binding NewList}" />
+            <ListBox Grid.Row="1"
+                     Grid.Column="1"
+                     ItemsSource="{Binding HotList}" />
+            <ListBox Grid.Row="1"
+                     Grid.Column="2"
+                     ItemsSource="{Binding Top500List}" />
+        </Grid>
+    </Grid>
+</UserControl>
